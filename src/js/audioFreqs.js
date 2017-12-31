@@ -17,29 +17,28 @@ requestAnimationFrame(update);
 
 var bands = {
   sub: {
-    from: 20,
-    to: 250
+    from: 32,
+    to: 512
   },
 
   low: {
-    from: 251,
-    to: 500
+    from: 513,
+    to: 2048
   },
 
   mid: {
-    from: 501,
-    to: 3000
+    from: 2049,
+    to: 8192
   },
 
   high: {
-    from: 3001,
-    to: 6000
+    from: 8193,
+    to: 12384
   }
 };
 
 function update() {
   requestAnimationFrame(update);
-
   analyser.getByteFrequencyData(freq);
 }
 

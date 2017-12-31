@@ -14,10 +14,12 @@ OBJLoader(THREE);
 
 /************************* **********************/
 
+var particles;
+
 /* Init renderer and canvas */
 const container = document.body;
 const renderer = new WebGLRenderer({ antialias: true });
-renderer.setClearColor(0x323232);
+renderer.setClearColor(0x222222);
 container.style.overflow = 'hidden';
 container.style.margin = 0;
 container.appendChild(renderer.domElement);
@@ -37,17 +39,23 @@ camera.position.set(0, 0, 100);
 
 const controls = new OrbitControls(camera, {
   element: renderer.domElement,
-  distance: 20,
+  distance: 100,
   phi: Math.PI * 10.5
 });
 
 /* Lights */
-const frontLight = new PointLight(0xffffff, 1);
-const backLight = new PointLight(0xffffff, 0.5);
-scene.add(frontLight);
-scene.add(backLight);
-frontLight.position.x = 20;
-backLight.position.x = -20;
+const ambLight = new THREE.AmbientLight(0x0, 0.75);
+scene.add(ambLight);
+ambLight.position.x = 50;
+ambLight.position.y = 1.5;
+
+const light = new THREE.PointLight(0xffffff, 0.5);
+scene.add(light);
+light.position.x = 50;
+light.position.y = 1.5;
+
+const helper = new THREE.PointLightHelper(light, 0.5);
+scene.add(helper);
 
 /* Content of scene */
 //model
@@ -75,24 +83,31 @@ function addObj(mesh) {
   var zDistance = 35;
 
   var xOffset = -40; //initial offset so does not start in middle
+  var zOffset = -40;
 
-  const material = new THREE.MeshPhongMaterial({
-    color: 0xffffff,
-    flatShading: THREE.FlatShading,
-    opacity: 5,
-    shininess: 120,
-    transparent: true
-  });
+  particles = new THREE.Object3D();
+  scene.add(particles);
 
   for (var i = 0; i < 4; i++) {
     for (var j = 0; j < 3; j++) {
       for (var k = 0; k < 3; k++) {
+        const material = new THREE.MeshPhongMaterial({
+          color: 0xed368c,
+          flatShading: THREE.FlatShading,
+          shininess: 100,
+          emissive: 0x22121a,
+          specular: 0xfffff
+        });
+
         var mesh = new THREE.Mesh(mesh.geometry, material);
         mesh.scale.set(50, 50, 50);
         mesh.position.x = xDistance * i + xOffset;
         mesh.position.y = yDistance * j;
-        mesh.position.z = zDistance * k;
-        scene.add(mesh);
+        mesh.position.z = zDistance * k + zOffset;
+
+        mesh.updateMatrix();
+        mesh.matrixAutoUpdate = true;
+        particles.add(mesh);
       }
     }
   }
@@ -112,7 +127,7 @@ function onResize() {
 
 // Render loop
 function render() {
-  // track mouse movement
+  // track navigation in scene
   controls.update();
 
   // get sound freqs
@@ -120,6 +135,25 @@ function render() {
   const lowAvg = average(analyser, freq, bands.low.from, bands.low.to);
   const midAvg = average(analyser, freq, bands.mid.from, bands.mid.to);
   const highAvg = average(analyser, freq, bands.high.from, bands.high.to);
+
+  for (var i = 0; i < particles.children.length; i++) {
+    particles.children[i].rotation.x += midAvg / 5;
+    particles.children[i].rotation.x -= highAvg / 5;
+
+    particles.children[i].rotation.y += subAvg / 50;
+    particles.children[i].rotation.y -= lowAvg / 50;
+
+    particles.children[i].rotation.z += highAvg / 150;
+    particles.children[i].rotation.z -= subAvg / 150;
+  }
+
+  for (var j = 0; j < particles.children.length; j = j + 2) {
+    particles.children[j].scale.set(150 * midAvg, 150 * midAvg, 150 * midAvg);
+  }
+
+  for (var k = 1; k < particles.children.length; k = k + 2) {
+    particles.children[k].scale.set(50 * subAvg, 50 * subAvg, 50 * subAvg);
+  }
 
   renderer.render(scene, camera);
 }

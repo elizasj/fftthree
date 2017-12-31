@@ -51,30 +51,7 @@ export default class OrbitControls {
 
     this.addEvents();
     this.rotateTo(this._theta, this._phi);
-
-    // add launchpad
-    // webMidiControl(this.onMidiInput.bind(this));
   }
-
-  //   onMidiInput(controller, value) {
-  //     value = value;
-  //     let val = (value - 64) / -64;
-  //     const delta = val - (this.lastValue || 0);
-
-  //     this.lastValue = val;
-
-  //     if (controller.number === 21) {
-  //       this.inputDelta.x += delta * 0.1;
-  //     }
-
-  //     if (controller.number === 22) {
-  //       this.inputDelta.y += delta * 0.1;
-  //     }
-
-  //     if (controller.number === 23) {
-  //       this.inputDelta.z += delta * 100;
-  //     }
-  //   }
 
   dispose() {
     this.removeEvents();
