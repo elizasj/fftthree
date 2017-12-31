@@ -5,8 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "budo src/index.js --open --live -- -t babelify",
-    "build":
-      "browserify -v -d src/index.js -t babelify | uglifyjs -cm > index.js"
+    "build": "browserify src/index.js -t babelify | uglifyjs -cm > index.js"
   },
   "author": "ElizaSJ",
   "license": "ISC",
