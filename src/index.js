@@ -14,7 +14,7 @@ OBJLoader(THREE);
 
 /************************* **********************/
 
-var particles;
+let particles;
 
 /* Init renderer and canvas */
 const container = document.body;
