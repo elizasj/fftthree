@@ -62,7 +62,7 @@ scene.add(helper);
 var loader = new THREE.OBJLoader();
 //load a resource
 loader.load(
-  '/src/objects/model.obj',
+  'src/objects/model.obj',
   // called when resource is loaded
   function(object) {
     const objs = [];
